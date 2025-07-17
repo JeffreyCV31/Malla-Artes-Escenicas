@@ -220,12 +220,12 @@
         subjects.forEach(subject => {
           const name = typeof subject === 'string' ? subject : subject.name;
           const requirements = typeof subject === 'string' ? [] : subject.requires || [];
+          const unmet = requirements.filter(req => !approved.has(req));
+          const isLocked = unmet.length > 0 && !approved.has(name);
+
           const div = document.createElement("div");
           div.className = "subject";
           div.textContent = name;
-
-          const unmet = requirements.filter(req => !approved.has(req));
-          const isLocked = unmet.length > 0 && !approved.has(name);
 
           if (isLocked) {
             div.classList.add("locked");
@@ -239,26 +239,18 @@
           }
 
           div.addEventListener("click", () => {
-  const subjectName = typeof subject === 'string' ? subject : subject.name;
-  const reqs = typeof subject === 'string' ? [] : subject.requires || [];
-  const unmetNow = reqs.filter(req => !approved.has(req));
-  const lockedNow = unmetNow.length > 0 && !approved.has(subjectName);
-  if (lockedNow) return;
-
-  if (!current.has(subjectName) && !approved.has(subjectName)) {
-    current.add(subjectName); // sin estado → cursando
-  } else if (current.has(subjectName)) {
-    current.delete(subjectName); // cursando → aprobado
-    approved.add(subjectName);
-  } else if (approved.has(subjectName)) {
-    approved.delete(subjectName); // aprobado → sin estado
-  }
-
-  saveProgress();
-  renderCurriculum();
-});
-
-
+            if (isLocked) return;
+            if (!current.has(name) && !approved.has(name)) {
+              current.add(name); // sin estado → cursando
+            } else if (current.has(name)) {
+              current.delete(name); // cursando → aprobado
+              approved.add(name);
+            } else if (approved.has(name)) {
+              approved.delete(name); // aprobado → sin estado
+            }
+            saveProgress();
+            renderCurriculum();
+          });
 
           col.appendChild(div);
         });
@@ -271,3 +263,4 @@
   </script>
 </body>
 </html>
+
