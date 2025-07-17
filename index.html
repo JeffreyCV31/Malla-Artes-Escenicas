@@ -136,7 +136,7 @@
         "Conocimientos Pedagogicos",
         { name: "Didactica En Interpretacion Escenica", requires: ["Montaje"] },
         { name: "Proyeccion", requires: ["Montaje"] },
-        "Textos y Discursos 2", requires: ["Textos y Discursos 1"] },
+        "Textos y Discursos 2"
       ],
       "Séptimo Semestre": [
         { name: "Dramaturgia 2", requires: ["Dramaturgia 1"] },
@@ -156,10 +156,11 @@
       "Noveno Semestre": [
         { name: "Practica Pedagógica 1", requires: [
           "Actuación Para Montaje", "Danza Para Montaje", "Dramaturgia Activa Del Cuerpo",
-          "Voz Para Montaje", "Montaje", "Iluminación Para La Escena",
-          "Dramaturgia 1", "Dramaturgia 2", "Intensificación 1", "Intensificación 2",
-          "Didactica En Interpretacion Escenica", "Didáctica En Puesta En Escena y Creación",
-          "Seminario De Practica Profesional E Investigativa"] },
+          "Voz Para Montaje", "Montaje", "Iluminación Para La Escena", "Dramaturgia 2",
+          "Intensificación 3", "Didáctica Del Pensamiento Escénico",
+          "Didáctica En Puesta En Escena y Creación",
+          "Seminario De Practica Profesional E Investigativa"
+        ] },
         "Informática",
         "Electiva"
       ],
@@ -170,29 +171,12 @@
       ]
     };
 
-    const curriculumDiv = document.getElementById("curriculum");
-    const completedSubjects = JSON.parse(localStorage.getItem("completedSubjects") || "[]");
-
-    function isUnlocked(subject, requirements) {
-      return requirements.every(r => completedSubjects.includes(r));
-    }
-
-    function toggleSubject(name, el) {
-      if (el.classList.contains("locked")) return;
-      const index = completedSubjects.indexOf(name);
-      if (index === -1) {
-        completedSubjects.push(name);
-        el.classList.add("completed");
-      } else {
-        completedSubjects.splice(index, 1);
-        el.classList.remove("completed");
-      }
-      localStorage.setItem("completedSubjects", JSON.stringify(completedSubjects));
-      renderCurriculum();
-    }
+    const approved = new Set();
 
     function renderCurriculum() {
+      const curriculumDiv = document.getElementById("curriculum");
       curriculumDiv.innerHTML = "";
+
       for (const [semester, subjects] of Object.entries(semesters)) {
         const col = document.createElement("div");
         col.className = "semester";
@@ -207,19 +191,24 @@
           div.className = "subject";
           div.textContent = name;
 
-          const isComplete = completedSubjects.includes(name);
-          const unlocked = isUnlocked(name, requirements);
+          const unmet = requirements.filter(req => !approved.has(req));
+          const isLocked = unmet.length > 0;
 
-          if (!unlocked) {
+          if (isLocked) {
             div.classList.add("locked");
-            div.setAttribute("data-tooltip", "Requiere: " + requirements.filter(r => !completedSubjects.includes(r)).join(", "));
-          } else {
-            div.addEventListener("click", () => toggleSubject(name, div));
+            div.dataset.tooltip = `Requiere: ${unmet.join(", ")}`;
           }
 
-          if (isComplete) {
-            div.classList.add("completed");
-          }
+          div.addEventListener("click", () => {
+            if (div.classList.contains("locked")) return;
+            div.classList.toggle("completed");
+            if (div.classList.contains("completed")) {
+              approved.add(name);
+            } else {
+              approved.delete(name);
+            }
+            renderCurriculum();
+          });
 
           col.appendChild(div);
         });
