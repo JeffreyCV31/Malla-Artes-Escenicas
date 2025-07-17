@@ -139,53 +139,66 @@
         { name: "Dramaturgia Activa Del Cuerpo", requires: ["Dramaturgia Moderna Del Cuerpo"] },
         { name: "Voz Para Montaje", requires: ["Interpretación Vocal Para La Escena"] },
         { name: "Montaje", requires: ["Ensamble 4"] },
-        { name: "Iluminacion Para La Escena", requires: ["Maquillaje Escénico"] },
+        { name: "Iluminación Para La Escena", requires: ["Maquillaje Escénico"] },
         "Danza y Teatro Nacional y Latinoamericano",
-        "Evaluacion De Los Procesos",
+        "Evaluación De Los Procesos",
         "Textos y Discursos 1"
       ],
       "Sexto Semestre": [
         { name: "Dramaturgia 1", requires: ["Montaje"] },
-        { name: "Intensificacion 1", requires: ["Montaje"] },
+        { name: "Intensificación 1", requires: ["Montaje"] },
         "Conocimientos Pedagogicos",
-        { name: "Didactica En Interpretacion Escenica", requires: ["Montaje"] }, 
+        { name: "Didactica En Interpretacion Escenica", requires: ["Montaje"] },
         { name: "Proyeccion", requires: ["Montaje"] },
-        { name: "Textos y Discursos 2", requires: ["Textos y Discursos 1"] }, 
+        "Textos y Discursos 2"
       ],
       "Séptimo Semestre": [
         { name: "Dramaturgia 2", requires: ["Dramaturgia 1"] },
-        { name: "Intensificacion 2", requires: ["Intensificacion 1"] },
+        { name: "Intensificación 2", requires: ["Intensificación 1"] },
         "Roles y Desempeños Del Maestro",
-        { name: "Didactica En Puesta En Escena y Creacion", requires: ["Didactica En Interpretacion Escenica"] }, 
-        { name: "Seminario De Practica Profesional E Investigatvia", requires: ["Didactica En Interpretacion Escenica"] },
+        { name: "Didáctica En Puesta En Escena y Creación", requires: ["Didactica En Interpretacion Escenica"] },
+        { name: "Seminario De Practica Profesional E Investigativa", requires: ["Didactica En Interpretacion Escenica"] },
         { name: "Textos y Discursos 3", requires: ["Textos y Discursos 2"] },
         "Electiva"
       ],
       "Octavo Semestre": [
-        { name: "Intensificacion 3", requires: ["Intensificacion 2"] },
-        { name: "Didactica Del Pensamiento Escenico", requires: ["Didactica En Puesta En Escena y Creacion"] }, 
-        "Ingles"
+        { name: "Intensificación 3", requires: ["Intensificación 2"] },
+        { name: "Didáctica Del Pensamiento Escénico", requires: ["Didáctica En Puesta En Escena y Creación"] },
+        "Ingles",
         "Electiva"
       ],
       "Noveno Semestre": [
-        { name: "Practica Pedagogica 1", requires: ["Intensificacion 3"] },
-        "Informatica"
+        {
+          name: "Practica Pedagógica 1",
+          requires: [
+            "Actuación Para Montaje", "Danza Para Montaje", "Dramaturgia Activa Del Cuerpo",
+            "Voz Para Montaje", "Montaje", "Iluminación Para La Escena",
+            "Danza y Teatro Nacional y Latinoamericano", "Evaluación De Los Procesos",
+            "Dramaturgia 1", "Intensificación 1", "Conocimientos Pedagogicos",
+            "Didactica En Interpretacion Escenica", "Proyeccion",
+            "Dramaturgia 2", "Intensificación 2", "Roles y Desempeños Del Maestro",
+            "Didáctica En Puesta En Escena y Creación", "Seminario De Practica Profesional E Investigativa"
+          ]
+        },
+        "Informática",
         "Electiva"
       ],
       "Décimo Semestre": [
-        { name: "Practica Pedagogica 2", requires: ["Practica Pedagogica 1"] },
-        "Electiva"
+        {
+          name: "Practica Pedagógica 2",
+          requires: ["Practica Pedagógica 1"]
+        },
+        "Electiva",
         "Opcional"
       ]
     };
-    
- let approved = new Set(JSON.parse(localStorage.getItem("approvedSubjects") || "[]"));
+
+    let approved = new Set(JSON.parse(localStorage.getItem("approvedSubjects") || "[]"));
 
     function saveProgress() {
       localStorage.setItem("approvedSubjects", JSON.stringify([...approved]));
     }
 
-    
     function renderCurriculum() {
       const curriculumDiv = document.getElementById("curriculum");
       curriculumDiv.innerHTML = "";
