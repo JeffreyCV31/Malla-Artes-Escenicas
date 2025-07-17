@@ -239,24 +239,25 @@
           }
 
           div.addEventListener("click", () => {
-  const subjectName = name;
+  const subjectName = typeof subject === 'string' ? subject : subject.name;
   const reqs = typeof subject === 'string' ? [] : subject.requires || [];
   const unmetNow = reqs.filter(req => !approved.has(req));
   const lockedNow = unmetNow.length > 0 && !approved.has(subjectName);
   if (lockedNow) return;
 
   if (!current.has(subjectName) && !approved.has(subjectName)) {
-    current.add(subjectName); // de sin estado a cursando
+    current.add(subjectName); // sin estado → cursando
   } else if (current.has(subjectName)) {
-    current.delete(subjectName);
-    approved.add(subjectName); // de cursando a aprobado
+    current.delete(subjectName); // cursando → aprobado
+    approved.add(subjectName);
   } else if (approved.has(subjectName)) {
-    approved.delete(subjectName); // de aprobado a sin estado
+    approved.delete(subjectName); // aprobado → sin estado
   }
 
   saveProgress();
   renderCurriculum();
 });
+
 
 
           col.appendChild(div);
