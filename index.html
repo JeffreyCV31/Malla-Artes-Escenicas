@@ -239,17 +239,19 @@
           }
 
           div.addEventListener("click", () => {
-  const unmetNow = requirements.filter(req => !approved.has(req));
-  const lockedNow = unmetNow.length > 0 && !approved.has(name);
+  const subjectName = name;
+  const reqs = typeof subject === 'string' ? [] : subject.requires || [];
+  const unmetNow = reqs.filter(req => !approved.has(req));
+  const lockedNow = unmetNow.length > 0 && !approved.has(subjectName);
   if (lockedNow) return;
 
-  if (!current.has(name) && !approved.has(name)) {
-    current.add(name); // de sin estado a cursando
-  } else if (current.has(name)) {
-    current.delete(name);
-    approved.add(name); // de cursando a aprobado
-  } else if (approved.has(name)) {
-    approved.delete(name); // de aprobado a sin estado
+  if (!current.has(subjectName) && !approved.has(subjectName)) {
+    current.add(subjectName); // de sin estado a cursando
+  } else if (current.has(subjectName)) {
+    current.delete(subjectName);
+    approved.add(subjectName); // de cursando a aprobado
+  } else if (approved.has(subjectName)) {
+    approved.delete(subjectName); // de aprobado a sin estado
   }
 
   saveProgress();
