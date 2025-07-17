@@ -239,17 +239,23 @@
           }
 
           div.addEventListener("click", () => {
-            if (isLocked) return;
-            if (approved.has(name)) {
-              approved.delete(name);
-            } else if (current.has(name)) {
-              current.delete(name);
-            } else {
-              current.add(name);
-            }
-            saveProgress();
-            renderCurriculum();
-          });
+  const unmetNow = requirements.filter(req => !approved.has(req));
+  const lockedNow = unmetNow.length > 0 && !approved.has(name);
+  if (lockedNow) return;
+
+  if (!current.has(name) && !approved.has(name)) {
+    current.add(name); // de sin estado a cursando
+  } else if (current.has(name)) {
+    current.delete(name);
+    approved.add(name); // de cursando a aprobado
+  } else if (approved.has(name)) {
+    approved.delete(name); // de aprobado a sin estado
+  }
+
+  saveProgress();
+  renderCurriculum();
+});
+
 
           col.appendChild(div);
         });
