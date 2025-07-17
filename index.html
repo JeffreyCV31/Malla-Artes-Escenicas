@@ -65,8 +65,22 @@
       opacity: 1;
     }
     .subject.completed {
-      background-color: #a9dfbf !important;
+      background-color: #58d68d !important;
+      color: #155724;
+      font-weight: bold;
+      position: relative;
+      padding-left: 2em;
+      opacity: 0.9;
       text-decoration: line-through;
+    }
+    .subject.completed::before {
+      content: "✓";
+      position: absolute;
+      left: 0.6em;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #155724;
+      font-size: 1em;
     }
   </style>
 </head>
@@ -76,10 +90,100 @@
 
   <script>
     const semesters = {
-      // (contenido de semesters intacto, omitido aquí por brevedad)
+      "Primer Semestre": [
+        "Actuación Juego",
+        "Danza Rito",
+        "Dinámica Del Cuerpo",
+        "Fundamentación Vocal Para La Escena",
+        "Ensamble 1",
+        "Historia De Las Artes Escénicas",
+        "Educación y Pedagogía 1",
+        "Constitución"
+      ],
+      "Segundo Semestre": [
+        { name: "Actuación Drama", requires: ["Actuación Juego"] },
+        { name: "Danza Técnica Clásica", requires: ["Danza Rito"] },
+        { name: "Cuerpo y Espacio", requires: ["Dinámica Del Cuerpo"] },
+        { name: "Coro Para Las Artes Escénicas", requires: ["Fundamentación Vocal Para La Escena"] },
+        { name: "Ensamble 2", requires: ["Ensamble 1"] },
+        "Vestuario Escénico",
+        "Historia De La Danza y El Teatro Clásico",
+        "Educación y Pedagogía 2",
+        "Razonamiento Lógico 1"
+      ],
+      "Tercer Semestre": [
+        { name: "Actuación Personaje", requires: ["Actuación Drama"] },
+        { name: "Danza Tradicional", requires: ["Danza Técnica Clásica"] },
+        { name: "Técnicas De Combate", requires: ["Cuerpo y Espacio"] },
+        { name: "La Voz y El Personaje", requires: ["Coro Para Las Artes Escénicas"] },
+        { name: "Ensamble 3", requires: ["Ensamble 2"] },
+        { name: "Escenografía", requires: ["Vestuario Escénico"] },
+        "Danza y Teatro Siglo XV al XIX",
+        "Teoría y Practica Curricular",
+        { name: "Razonamiento Lógico 2", requires: ["Razonamiento Lógico 1"] }
+      ],
+      "Cuarto Semestre": [
+        { name: "Actuación Dramaturgia del Actor", requires: ["Actuación Personaje"] },
+        { name: "Danza Moderna", requires: ["Danza Tradicional"] },
+        { name: "Dramaturgia Moderna Del Cuerpo", requires: ["Técnicas De Combate"] },
+        { name: "Interpretación Vocal Para La Escena", requires: ["La Voz y El Personaje"] },
+        { name: "Ensamble 4", requires: ["Ensamble 3"] },
+        { name: "Maquillaje Escénico", requires: ["Escenografía"] },
+        "Danza y Teatro Contemporáneo",
+        "Culturas y Aprendizajes",
+        { name: "Razonamiento Lógico 3", requires: ["Razonamiento Lógico 2"] }
+      ],
+      "Quinto Semestre": [
+        { name: "Actuación Para Montaje", requires: ["Actuación Dramaturgia del Actor"] },
+        { name: "Danza Para Montaje", requires: ["Danza Moderna"] },
+        { name: "Dramaturgia Activa Del Cuerpo", requires: ["Dramaturgia Moderna Del Cuerpo"] },
+        { name: "Voz Para Montaje", requires: ["Interpretación Vocal Para La Escena"] },
+        { name: "Montaje", requires: ["Ensamble 4"] },
+        { name: "Iluminacion Para La Escena", requires: ["Maquillaje Escénico"] },
+        "Danza y Teatro Nacional y Latinoamericano",
+        "Evaluacion De Los Procesos",
+        "Textos y Discursos 1"
+      ],
+      "Sexto Semestre": [
+        { name: "Dramaturgia 1", requires: ["Montaje"] },
+        { name: "Intensificacion 1", requires: ["Montaje"] },
+        "Conocimientos Pedagogicos",
+        { name: "Didactica En Interpretacion Escenica", requires: ["Montaje"] }, 
+        { name: "Proyeccion", requires: ["Montaje"] },
+        { name: "Textos y Discursos 2", requires: ["Textos y Discursos 1"] }, 
+      ],
+      "Séptimo Semestre": [
+        { name: "Dramaturgia 2", requires: ["Dramaturgia 1"] },
+        { name: "Intensificacion 2", requires: ["Intensificacion 1"] },
+        "Roles y Desempeños Del Maestro",
+        { name: "Didactica En Puesta En Escena y Creacion", requires: ["Didactica En Interpretacion Escenica"] }, 
+        { name: "Seminario De Practica Profesional E Investigatvia", requires: ["Didactica En Interpretacion Escenica"] },
+        { name: "Textos y Discursos 3", requires: ["Textos y Discursos 2"] },
+        "Electiva"
+      ],
+      "Octavo Semestre": [
+        { name: "Intensificacion 3", requires: ["Intensificacion 2"] },
+        { name: "Didactica Del Pensamiento Escenico", requires: ["Didactica En Puesta En Escena y Creacion"] }, 
+        "Ingles"
+        "Electiva"
+      ],
+      "Noveno Semestre": [
+        { name: "Practica Pedagogica 1", requires: ["Intensificacion 3"] },
+        "Informatica"
+        "Electiva"
+      ],
+      "Décimo Semestre": [
+        { name: "Practica Pedagogica 2", requires: ["Practica Pedagogica 1"] },
+        "Electiva"
+        "Opcional"
+      ]
     };
 
-    const approved = new Set(JSON.parse(localStorage.getItem("approvedSubjects") || "[]"));
+    let approved = new Set(JSON.parse(localStorage.getItem("approvedSubjects") || "[]"));
+
+    function saveProgress() {
+      localStorage.setItem("approvedSubjects", JSON.stringify([...approved]));
+    }
 
     function renderCurriculum() {
       const curriculumDiv = document.getElementById("curriculum");
@@ -100,7 +204,7 @@
           div.textContent = name;
 
           const unmet = requirements.filter(req => !approved.has(req));
-          const isLocked = unmet.length > 0;
+          const isLocked = unmet.length > 0 && !approved.has(name);
 
           if (isLocked) {
             div.classList.add("locked");
@@ -112,14 +216,13 @@
           }
 
           div.addEventListener("click", () => {
-            if (div.classList.contains("locked")) return;
-            div.classList.toggle("completed");
-            if (div.classList.contains("completed")) {
-              approved.add(name);
-            } else {
+            if (isLocked) return;
+            if (approved.has(name)) {
               approved.delete(name);
+            } else {
+              approved.add(name);
             }
-            localStorage.setItem("approvedSubjects", JSON.stringify([...approved]));
+            saveProgress();
             renderCurriculum();
           });
 
