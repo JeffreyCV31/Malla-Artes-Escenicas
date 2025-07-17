@@ -82,6 +82,11 @@
       color: #155724;
       font-size: 1em;
     }
+    .subject.current {
+      background-color: #f9e79f !important;
+      color: #7d6608;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -159,13 +164,13 @@
         { name: "Didáctica En Puesta En Escena y Creación", requires: ["Didactica En Interpretacion Escenica"] },
         { name: "Seminario De Practica Profesional E Investigativa", requires: ["Didactica En Interpretacion Escenica"] },
         { name: "Textos y Discursos 3", requires: ["Textos y Discursos 2"] },
-        "Electiva"
+        "Electiva 1"
       ],
       "Octavo Semestre": [
         { name: "Intensificación 3", requires: ["Intensificación 2"] },
         { name: "Didáctica Del Pensamiento Escénico", requires: ["Didáctica En Puesta En Escena y Creación"] },
         "Ingles",
-        "Electiva"
+        "Electiva 2"
       ],
       "Noveno Semestre": [
         {
@@ -181,22 +186,24 @@
           ]
         },
         "Informática",
-        "Electiva"
+        "Electiva 3"
       ],
       "Décimo Semestre": [
         {
           name: "Practica Pedagógica 2",
           requires: ["Practica Pedagógica 1"]
         },
-        "Electiva",
+        "Electiva 4",
         "Opcional"
       ]
     };
 
     let approved = new Set(JSON.parse(localStorage.getItem("approvedSubjects") || "[]"));
+    let current = new Set(JSON.parse(localStorage.getItem("currentSubjects") || "[]"));
 
     function saveProgress() {
       localStorage.setItem("approvedSubjects", JSON.stringify([...approved]));
+      localStorage.setItem("currentSubjects", JSON.stringify([...current]));
     }
 
     function renderCurriculum() {
@@ -227,14 +234,18 @@
 
           if (approved.has(name)) {
             div.classList.add("completed");
+          } else if (current.has(name)) {
+            div.classList.add("current");
           }
 
           div.addEventListener("click", () => {
             if (isLocked) return;
             if (approved.has(name)) {
               approved.delete(name);
+            } else if (current.has(name)) {
+              current.delete(name);
             } else {
-              approved.add(name);
+              current.add(name);
             }
             saveProgress();
             renderCurriculum();
